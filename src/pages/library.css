@@ -1,0 +1,457 @@
+/* =========================================================
+   SOCIOLAB - BIBLIOTHÈQUE
+   ========================================================= */
+
+.library-page {
+  width: 100%;
+}
+
+/* =========================================================
+   EN-TÊTE
+   ========================================================= */
+
+.library-page .page-heading {
+  max-width: 900px;
+  margin-bottom: 35px;
+}
+
+.library-page .page-heading h1 {
+  margin: 8px 0 12px;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.library-page .page-heading p {
+  max-width: 760px;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  opacity: 0.78;
+}
+
+/* =========================================================
+   BARRE DE RECHERCHE + FILTRES
+   ========================================================= */
+
+.library-toolbar {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) auto;
+  gap: 20px;
+  align-items: end;
+  padding: 22px;
+  margin-bottom: 45px;
+  border: 1px solid rgba(30, 50, 80, 0.1);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 15px 45px rgba(20, 40, 70, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+/* Recherche */
+
+.library-search {
+  position: relative;
+}
+
+.library-search::before {
+  content: "⌕";
+  position: absolute;
+  left: 17px;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-52%);
+  font-size: 25px;
+  opacity: 0.5;
+}
+
+.library-search input {
+  width: 100%;
+  height: 54px;
+  padding: 0 20px 0 50px;
+  border: 1px solid rgba(30, 50, 80, 0.14);
+  border-radius: 14px;
+  outline: none;
+  background: #f8fafc;
+  font-size: 0.98rem;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.library-search input:focus {
+  background: #ffffff;
+  border-color: #4169e1;
+  box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.1);
+}
+
+/* Filtres */
+
+.library-filters {
+  display: flex;
+  gap: 14px;
+}
+
+.library-filters label {
+  display: flex;
+  min-width: 170px;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.library-filters select {
+  height: 54px;
+  padding: 0 38px 0 14px;
+  border: 1px solid rgba(30, 50, 80, 0.14);
+  border-radius: 14px;
+  background: #f8fafc;
+  color: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.library-filters select:focus {
+  border-color: #4169e1;
+  box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.1);
+}
+
+/* =========================================================
+   RÉSULTATS
+   ========================================================= */
+
+.library-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.library-results-header h2 {
+  margin: 7px 0 0;
+  font-size: 1.45rem;
+}
+
+/* =========================================================
+   GRILLE
+   ========================================================= */
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* =========================================================
+   CARTE
+   ========================================================= */
+
+.library-card {
+  position: relative;
+  display: flex;
+  min-height: 500px;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(30, 50, 80, 0.09);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 12px 35px rgba(20, 40, 70, 0.07);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.library-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(65, 105, 225, 0.18);
+  box-shadow: 0 22px 55px rgba(20, 40, 70, 0.14);
+}
+
+/* =========================================================
+   TYPE + ANNÉE
+   ========================================================= */
+
+.library-card .course-card-meta {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.library-card .course-card-meta span,
+.library-card .course-card-meta strong {
+  padding: 7px 11px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+  font-size: 0.72rem;
+}
+
+.library-card .course-card-meta span {
+  font-weight: 700;
+}
+
+.library-card .course-card-meta strong {
+  font-weight: 800;
+}
+
+/* =========================================================
+   IMAGE / ICÔNE DE RESSOURCE
+   ========================================================= */
+
+.library-resource-icon {
+  width: 100%;
+  height: 230px;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    #eef3ff,
+    #e7edf8
+  );
+}
+
+.library-resource-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.library-card:hover .library-resource-icon img {
+  transform: scale(1.05);
+}
+
+/* Si une ancienne icône emoji existe encore */
+
+.library-resource-icon:not(:has(img)) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4.5rem;
+}
+
+/* =========================================================
+   CATÉGORIE
+   ========================================================= */
+
+.library-category {
+  align-self: flex-start;
+  margin: 20px 22px 0;
+  padding: 6px 11px;
+  border-radius: 20px;
+  background: rgba(65, 105, 225, 0.09);
+  color: #4169e1;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* =========================================================
+   TITRE
+   ========================================================= */
+
+.library-card h2 {
+  margin: 13px 22px 9px;
+  font-size: 1.18rem;
+  line-height: 1.35;
+  font-weight: 750;
+}
+
+.library-card h2:hover {
+  color: #4169e1;
+}
+
+/* =========================================================
+   AUTEUR
+   ========================================================= */
+
+.library-author {
+  margin: 0 22px 10px;
+  font-size: 0.88rem;
+  opacity: 0.75;
+}
+
+.library-author strong {
+  opacity: 1;
+}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.library-card > p:not(.library-author) {
+  margin: 0 22px;
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.65;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =========================================================
+   PIED DE CARTE
+   ========================================================= */
+
+.library-card .course-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding: 20px 22px 22px;
+}
+
+.library-format {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.library-card .btn {
+  border-radius: 10px;
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.library-card .btn:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   ÉTAT VIDE
+   ========================================================= */
+
+.library-page .empty-state {
+  padding: 70px 30px;
+  border: 1px dashed rgba(30, 50, 80, 0.2);
+  border-radius: 20px;
+  background: #f8fafc;
+  text-align: center;
+}
+
+.library-page .empty-state h2 {
+  margin-bottom: 10px;
+}
+
+.library-page .empty-state p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+/* =========================================================
+   RESPONSIVE - TABLETTE
+   ========================================================= */
+
+@media (max-width: 1050px) {
+  .library-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .library-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .library-filters {
+    width: 100%;
+  }
+
+  .library-filters label {
+    flex: 1;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 680px) {
+  .library-page .page-heading h1 {
+    font-size: 2.3rem;
+  }
+
+  .library-toolbar {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .library-filters {
+    flex-direction: column;
+  }
+
+  .library-filters label {
+    width: 100%;
+  }
+
+  .library-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .library-card {
+    min-height: 0;
+  }
+
+  .library-resource-icon {
+    height: 210px;
+  }
+
+  .library-results-header h2 {
+    font-size: 1.2rem;
+  }
+}
+
+
+.library-page .page-heading {
+  position: relative;
+  max-width: 100%;
+  min-height: 280px;
+  margin-bottom: 35px;
+  padding: 60px 50px;
+
+  background-image: url("../src/assets/bibliotheque.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.library-page .page-heading::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 0;
+}
+
+.library-page .page-heading > div {
+  position: relative;
+  z-index: 1;
+  color: white;
+}

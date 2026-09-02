@@ -1,0 +1,17 @@
+﻿<svg width="180" height="48" viewBox="0 0 540 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1f4d"/>
+      <stop offset="100%" stop-color="#3e5bbd"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b78c28"/>
+      <stop offset="100%" stop-color="#ddaf4f"/>
+    </linearGradient>
+  </defs>
+  <path d="M96 14C74 14 58 28 52 52L32 98C30 104 35 110 42 110C46 110 49 108 52 104L80 56C100 28 116 16 142 16C166 16 188 34 188 62C188 91 170 116 136 116C112 116 100 108 92 98L88 90" fill="url(#grad1)"/>
+  <path d="M20 124C10 124 2 116 2 106V44C2 34 10 26 20 26H100C110 26 118 34 118 44V106C118 116 110 124 100 124H20Z" fill="url(#grad2)" opacity="0.95"/>
+  <path d="M20 34C8 34 0 42 0 54V96C0 108 8 116 20 116H100C112 116 120 108 120 96V54C120 42 112 34 100 34H20ZM20 44H100C106 44 110 48 110 54V96C110 102 106 106 100 106H20C14 106 10 102 10 96V54C10 48 14 44 20 44Z" fill="#fff" />
+  <text x="170" y="90" font-family="Inter, sans-serif" font-size="66" font-weight="700" fill="#0b1f4d">Socio</text>
+  <text x="350" y="90" font-family="Inter, sans-serif" font-size="66" font-weight="700" fill="#b78c28">Lab</text>
+</svg>
