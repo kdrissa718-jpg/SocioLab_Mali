@@ -1,10 +1,11 @@
 ﻿import { useEffect } from "react"; 
-import { NavLink, Outlet } from "react-router-dom";   
+import { NavLink, Outlet, useLocation } from "react-router-dom";   
 import logo from "../assets/sociolab-logo.svg"; 
 import "../App.css"; 
 import { useAppContext } from "../context/AppContext";             
 function Layout() {
   const { language, setLanguage, theme, setTheme, translations } = useAppContext();   
+  const location = useLocation();
   const content = translations[language];
   const isDarkMode = theme === "dark";
   useEffect(() => {
@@ -22,7 +23,7 @@ function Layout() {
     );
     targets.forEach((target) => observer.observe(target));
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div className="app-frame">

@@ -35,7 +35,7 @@ function InstructorDashboard() {
     description: profile.description,
     address: profile.address,
   }); 
-  const published = courses.filter((item) => publishedCourses.includes(item.id));
+  const published = courses.filter((item) => item.isPublished || publishedCourses.includes(item.id));
   const totalStudents = published.reduce((sum, item) => sum + item.students, 0);
 
   const updateModule = (index, field, value) => setCourse((current) => ({ ...current, modules: current.modules.map((module, i) => i === index ? { ...module, [field]: field === "hours" ? Number(value) : value } : module) }));

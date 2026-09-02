@@ -53,10 +53,36 @@ export function AppProvider({ children }) {
     description: "Professeur passionné par l’accompagnement des apprenants en sciences humaines et sociales.",
     address: "Dakar, Sénégal",
   });
-  const [courses, setCourses] = useState(defaultCourses);
+  const [courses, setCourses] = useState(() => {
+    const storedCourses = localStorage.getItem("sociolab_courses");
+    if (!storedCourses) return defaultCourses;
+
+    try {
+      return JSON.parse(storedCourses);
+    } catch {
+      return defaultCourses;
+    }
+  });
   const [enrolledCourseIds, setEnrolledCourseIds] = useState([1]);
   const [completedLessons, setCompletedLessons] = useState(["soc-1-0", "soc-1-1", "soc-1-2", "soc-2-0"]);
-  const [publishedCourses, setPublishedCourses] = useState([1, 4]);
+  const [publishedCourses, setPublishedCourses] = useState(() => {
+    const storedPublishedCourses = localStorage.getItem("sociolab_published_courses");
+    if (!storedPublishedCourses) return [1, 4];
+
+    try {
+      return JSON.parse(storedPublishedCourses);
+    } catch {
+      return [1, 4];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sociolab_courses", JSON.stringify(courses));
+  }, [courses]);
+
+  useEffect(() => {
+    localStorage.setItem("sociolab_published_courses", JSON.stringify(publishedCourses));
+  }, [publishedCourses]);
 
   const enrollCourse = useCallback((courseId) => {
     setEnrolledCourseIds((current) => (current.includes(courseId) ? current : [...current, courseId]));
@@ -105,13 +131,13 @@ export function AppProvider({ children }) {
       const newCourse = {
         ...course,
         id,
+        isPublished: true,
         modules,
         lessons: modules.reduce((total, module) => total + module.lessons.length, 0),
         duration: `${modules.reduce((total, module) => total + module.hours, 0)} h`,
         students: 0,
         progress: 0,
       };
-      setPublishedCourses((published) => [id, ...published]);
       return [newCourse, ...current];
     });
   }, []);
