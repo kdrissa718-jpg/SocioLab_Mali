@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sociolabmali.vercel.app/sitemap.xml
