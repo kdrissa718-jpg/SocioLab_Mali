@@ -6,8 +6,8 @@ import { defaultLanguage, translations } from "../i18n/translations";
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
-  const [selectedRole, setSelectedRole] = useState("student");
-  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem("sociolab_authenticated") === "true");
+  const [selectedRole, setSelectedRole] = useState(() => sessionStorage.getItem("sociolab_selectedRole") || "student");
+  const [isAuthenticated, setIsAuthenticated] = useState(() => sessionStorage.getItem("sociolab_authenticated") === "true");
   const [language, setLanguage] = useState(defaultLanguage);
   const [theme, setTheme] = useState(() => localStorage.getItem("sociolab_theme") || "light");
   //const [learnerName, setLearnerName] = useState("Apprenant SocioLab");
@@ -39,6 +39,10 @@ export function AppProvider({ children }) {
   useEffect(() => {
     localStorage.setItem("sociolab_learnerEmail", learnerEmail);
   }, [learnerEmail]);
+
+  useEffect(() => {
+    sessionStorage.setItem("sociolab_selectedRole", selectedRole);
+  }, [selectedRole]);
 
   useEffect(() => {
     localStorage.setItem("sociolab_theme", theme);
@@ -123,7 +127,7 @@ export function AppProvider({ children }) {
 
   const signIn = useCallback(() => {
     setIsAuthenticated(true);
-    localStorage.setItem("sociolab_authenticated", "true");
+    sessionStorage.setItem("sociolab_authenticated", "true");
   }, []);
 
   const signOut = useCallback(() => {
@@ -133,7 +137,8 @@ export function AppProvider({ children }) {
     setLearnerId("SL-0000");
     setLearnerEmail("");
     setStudentProfile({ photoUrl: "", photoName: "" });
-    localStorage.removeItem("sociolab_authenticated");
+    sessionStorage.removeItem("sociolab_authenticated");
+    sessionStorage.removeItem("sociolab_selectedRole");
     localStorage.removeItem("sociolab_learnerName");
     localStorage.removeItem("sociolab_learnerId");
     localStorage.removeItem("sociolab_learnerEmail");

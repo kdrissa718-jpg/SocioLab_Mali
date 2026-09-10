@@ -11,10 +11,10 @@ import Fieldwork from "./pages/fieldwork";
 import Library from "./pages/library.jsx";
 import AdminDashboard from "./pages/dashboard-admin";
 
-function DashboardRoute({ children }) {
-  const { isAuthenticated } = useAppContext();
+function DashboardRoute({ children, role }) {
+  const { isAuthenticated, selectedRole } = useAppContext();
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAuthenticated || (role && selectedRole !== role)) return <Navigate to="/login" replace />;
 
   return children;
 }
