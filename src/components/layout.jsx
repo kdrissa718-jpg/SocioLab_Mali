@@ -1,13 +1,15 @@
-﻿import { useEffect } from "react"; 
+﻿import { useEffect, useState } from "react"; 
 import { NavLink, Outlet, useLocation } from "react-router-dom";   
 import logo from "../assets/sociolab-logo.svg"; 
 import "../App.css"; 
 import { useAppContext } from "../context/AppContext";             
+import { Menu, X } from "lucide-react";
 function Layout() {
   const { language, setLanguage, theme, setTheme, translations } = useAppContext();   
   const location = useLocation();
   const content = translations[language];
   const isDarkMode = theme === "dark";
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   useEffect(() => {
     const targets = document.querySelectorAll(".reveal-section");
     const observer = new IntersectionObserver(
@@ -35,15 +37,18 @@ function Layout() {
             <small>{content.layout.brandTagline}</small>
           </div>
         </NavLink>
-        <nav className="topnav">
-          <NavLink to="/" end>
+        <button className="mobile-menu-toggle" type="button" onClick={() => setMobileNavOpen((current) => !current)} aria-expanded={mobileNavOpen} aria-controls="main-navigation" aria-label={mobileNavOpen ? "Fermer le menu" : "Ouvrir le menu"}>
+          {mobileNavOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+        </button>
+        <nav id="main-navigation" className={`topnav ${mobileNavOpen ? "is-open" : ""}`}>
+          <NavLink to="/" end onClick={() => setMobileNavOpen(false)}>
             {content.layout.nav.home}
           </NavLink>
-          <NavLink to="/courses">{content.layout.nav.courses}</NavLink>
-          <NavLink to="/library">{content.layout.nav.library}</NavLink>
-          <NavLink to="/fieldwork">{content.layout.nav.fieldwork}</NavLink>
-          <NavLink to="/register">{content.layout.nav.register}</NavLink>
-          <NavLink to="/login">{content.layout.nav.login}</NavLink>
+          <NavLink to="/courses" onClick={() => setMobileNavOpen(false)}>{content.layout.nav.courses}</NavLink>
+          <NavLink to="/library" onClick={() => setMobileNavOpen(false)}>{content.layout.nav.library}</NavLink>
+          <NavLink to="/fieldwork" onClick={() => setMobileNavOpen(false)}>{content.layout.nav.fieldwork}</NavLink>
+          <NavLink to="/register" onClick={() => setMobileNavOpen(false)}>{content.layout.nav.register}</NavLink>
+          <NavLink to="/login" onClick={() => setMobileNavOpen(false)}>{content.layout.nav.login}</NavLink>
           <label
             className={`theme-switch ${isDarkMode ? "dark" : "light"}`}
             aria-label={isDarkMode ? "Passer en mode clair" : "Passer en mode sombre"}

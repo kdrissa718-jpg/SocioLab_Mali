@@ -6,10 +6,10 @@ import thesisImage from "../assets/theseimage.jpg";
 import guideImage from "../assets/guideimage.jpg";
 import reportImage from "../assets/rapportimage.jpg";
 import memoireImage from "../assets/memoireimage.jpg";
-import libraryResources from "./library.js";
+import libraryHeroImage from "../assets/bibliotheque.jpg";
 import "./library.css";
 function Library() {
-  const { language } = useAppContext();
+  const { language, libraryResources } = useAppContext();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Toutes");
@@ -31,9 +31,9 @@ function Library() {
     return libraryResources.filter((resource) => {
       const matchesSearch =
         !query ||
-        resource.title.toLowerCase().includes(query) ||
-        resource.author.toLowerCase().includes(query) ||
-        resource.description.toLowerCase().includes(query);
+        String(resource.title || "").toLowerCase().includes(query) ||
+        String(resource.author || "").toLowerCase().includes(query) ||
+        String(resource.description || "").toLowerCase().includes(query);
 
       const matchesCategory =
         category === "Toutes" || resource.category === category;
@@ -43,10 +43,10 @@ function Library() {
 
       return matchesSearch && matchesCategory && matchesType;
     });
-  }, [search, category, type]);
+  }, [search, category, type, libraryResources]);
 
   return (
-    <section className="page-section reveal-section library-page">
+    <section className="page-section reveal-section library-page" style={{ "--library-hero": `url(${libraryHeroImage})` }}>
       <div className="page-heading">
         <div>
           <span className="eyebrow">SocioLab Mali</span>
@@ -150,30 +150,13 @@ function Library() {
             >
               <div className="course-card-meta">
                 <span>{resource.type}</span>
-                <strong>{resource.year}</strong>
+                <strong>{resource.year || "-"}</strong>
               </div>
 
             
           
                 <div className="library-resource-icon">
-  {resource.type === "Livre" && (
-    <img src={bookImage} alt="Livre" />
-  )}
-  {resource.type === "Rapport" && (
-    <img src={reportImage} alt="Rapport" />
-  )}
-  {resource.type === "Article scientifique" && (
-    <img src={articleImage} alt="Article scientifique" />
-  )}
-   {resource.type === "Thèse" && (
-    <img src={thesisImage} alt="Thèse" />
-  )}
-    {resource.type === "Guide" && (
-    <img src={guideImage} alt="Guide" />
-  )}
-   {resource.type === "Mémoire" && (
-    <img src={memoireImage} alt="Mémoire" />
-  )}
+  {resource.coverUrl ? <img src={resource.coverUrl} alt={`Couverture : ${resource.title}`} /> : resource.type === "Livre" ? <img src={bookImage} alt="Livre" /> : resource.type === "Rapport" ? <img src={reportImage} alt="Rapport" /> : resource.type === "Article scientifique" ? <img src={articleImage} alt="Article scientifique" /> : resource.type === "Thèse" ? <img src={thesisImage} alt="Thèse" /> : resource.type === "Guide" ? <img src={guideImage} alt="Guide" /> : <img src={memoireImage} alt="Mémoire" />}
     
       
               </div>
@@ -189,7 +172,7 @@ function Library() {
                 <strong>{resource.author}</strong>
               </p>
 
-              <p>{resource.description}</p>
+              <p>{resource.description || "Ressource pédagogique SocioLab."}</p>
 
               <div className="course-card-footer">
                 <span className="library-format">

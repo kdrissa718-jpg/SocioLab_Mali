@@ -429,11 +429,11 @@
 .library-page .page-heading {
   position: relative;
   max-width: 100%;
-  min-height: 280px;
+  min-height: clamp(220px, 30vw, 330px);
   margin-bottom: 35px;
-  padding: 60px 50px;
+  padding: clamp(28px, 5vw, 60px);
 
-  background-image: url("../src/assets/bibliotheque.jpg");
+  background-image: var(--library-hero);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

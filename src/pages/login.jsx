@@ -1,21 +1,47 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import learningImage from "../assets/img1.jpg";
+
+function PasswordField({ id, name, value, onChange, label, placeholder }) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div className="auth-field">
+      <label htmlFor={id}>{label}</label>
+      <div className="password-input-wrap">
+        <input
+          id={id}
+          type={isVisible ? "text" : "password"}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required
+          placeholder={placeholder}
+        />
+        <button
+          className="password-visibility-toggle"
+          type="button"
+          onClick={() => setIsVisible((current) => !current)}
+          aria-label={isVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+          title={isVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+        >
+          {isVisible ? <EyeOff size={19} aria-hidden="true" /> : <Eye size={19} aria-hidden="true" />}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { setSelectedRole, setLearnerName, setLearnerId, setLearnerEmail, setProfile, signIn, language, translations } = useAppContext();
   const content = translations[language];
-  const [mode, setMode] = useState(location.pathname === "/login" ? "login" : "register");
-
-  useEffect(() => {
-    setMode(location.pathname === "/login" ? "login" : "register");
-  }, [location.pathname]);
+  const mode = location.pathname === "/login" ? "login" : "register";
 
   const switchMode = (nextMode) => {
-    setMode(nextMode);
     navigate(nextMode === "login" ? "/login" : "/register", { replace: false });
   };
   const [registerData, setRegisterData] = useState({
@@ -51,9 +77,7 @@ function Login() {
     //console.log("Nom de l'apprenant :", nextName);
 
   const nextPath =
-    registerData.role === "instructor"
-      ? "/dashboard/instructor"
-      : "/dashboard/student";
+    registerData.role === "instructor" ? "/dashboard/instructor" : registerData.role === "admin" ? "/dashboard/admin" : "/dashboard/student";
 
   setSelectedRole(registerData.role);
 
@@ -82,9 +106,7 @@ const handleLoginSubmit = (event) => {
   const nextName = "Apprenant SocioLab Mali";
 
   const nextPath =
-    loginData.role === "instructor"
-      ? "/dashboard/instructor"
-      : "/dashboard/student";
+    loginData.role === "instructor" ? "/dashboard/instructor" : loginData.role === "admin" ? "/dashboard/admin" : "/dashboard/student";
 
   setSelectedRole(loginData.role);
   setLearnerName(nextName);
@@ -164,18 +186,14 @@ const handleLoginSubmit = (event) => {
               />
             </div>
 
-            <div className="auth-field">
-              <label htmlFor="registerPassword">Mot de passe</label>
-              <input
-                id="registerPassword"
-                type="password"
-                name="password"
-                value={registerData.password}
-                onChange={handleRegisterChange}
-                required
-                placeholder="Entrez votre mot de passe"
-              />
-            </div>
+            <PasswordField
+              id="registerPassword"
+              name="password"
+              value={registerData.password}
+              onChange={handleRegisterChange}
+              label="Mot de passe"
+              placeholder="Entrez votre mot de passe"
+            />
 
             <div className="auth-field">
               <label htmlFor="specialty">Spécialité</label>
@@ -200,6 +218,7 @@ const handleLoginSubmit = (event) => {
               >
                 <option value="student">{content.roles.student}</option>
                 <option value="instructor">{content.roles.instructor}</option>
+                <option value="admin">Administrateur</option>
               </select>
             </div>
 
@@ -228,18 +247,14 @@ const handleLoginSubmit = (event) => {
               />
             </div>
 
-            <div className="auth-field">
-              <label htmlFor="loginPassword">{content.login.fields.password}</label>
-              <input
-                id="loginPassword"
-                type="password"
-                name="password"
-                value={loginData.password}
-                onChange={handleLoginChange}
-                required
-                placeholder={content.login.fields.passwordPlaceholder}
-              />
-            </div>
+            <PasswordField
+              id="loginPassword"
+              name="password"
+              value={loginData.password}
+              onChange={handleLoginChange}
+              label={content.login.fields.password}
+              placeholder={content.login.fields.passwordPlaceholder}
+            />
 
             <div className="auth-field">
               <label htmlFor="loginRole">{content.login.fields.role}</label>
@@ -251,6 +266,7 @@ const handleLoginSubmit = (event) => {
               >
                 <option value="student">{content.roles.student}</option>
                 <option value="instructor">{content.roles.instructor}</option>
+                <option value="admin">Administrateur</option>
               </select>
             </div>
 

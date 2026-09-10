@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import defaultCourses from "../data/courses";
+import defaultLibraryResources from "../pages/library.js";
 import { defaultLanguage, translations } from "../i18n/translations";
 
 const AppContext = createContext(null);
@@ -63,9 +64,25 @@ export function AppProvider({ children }) {
       return defaultCourses;
     }
   });
+  const [libraryResources, setLibraryResources] = useState(() => {
+    const storedResources = localStorage.getItem("sociolab_library_resources");
+    if (!storedResources) return defaultLibraryResources;
+
+    try {
+      return JSON.parse(storedResources);
+    } catch {
+      return defaultLibraryResources;
+    }
+  });
+  const [notifications, setNotifications] = useState(() => {
+    const storedNotifications = localStorage.getItem("sociolab_admin_notifications");
+    const defaults = [{ id: 1, title: "Nouvelle inscription", audience: "Administrateurs", date: "10 sept. 2026", status: "Active", content: "Une nouvelle inscription nécessite votre attention." }];
+    if (!storedNotifications) return defaults;
+    try { return JSON.parse(storedNotifications); } catch { return defaults; }
+  });
   const [enrolledCourseIds, setEnrolledCourseIds] = useState([1]);
   const [completedLessons, setCompletedLessons] = useState(["soc-1-0", "soc-1-1", "soc-1-2", "soc-2-0"]);
-  const [publishedCourses, setPublishedCourses] = useState(() => {
+  const [publishedCourses] = useState(() => {
     const storedPublishedCourses = localStorage.getItem("sociolab_published_courses");
     if (!storedPublishedCourses) return [1, 4];
 
@@ -81,8 +98,12 @@ export function AppProvider({ children }) {
   }, [courses]);
 
   useEffect(() => {
-    localStorage.setItem("sociolab_published_courses", JSON.stringify(publishedCourses));
-  }, [publishedCourses]);
+    localStorage.setItem("sociolab_library_resources", JSON.stringify(libraryResources));
+  }, [libraryResources]);
+
+  useEffect(() => {
+    localStorage.setItem("sociolab_admin_notifications", JSON.stringify(notifications));
+  }, [notifications]);
 
   const enrollCourse = useCallback((courseId) => {
     setEnrolledCourseIds((current) => (current.includes(courseId) ? current : [...current, courseId]));
@@ -142,10 +163,22 @@ export function AppProvider({ children }) {
     });
   }, []);
 
+  const deleteCourse = useCallback((courseId) => {
+    setCourses((current) => current.filter((course) => course.id !== courseId));
+  }, []);
+
+  const addLibraryResource = useCallback((resource) => {
+    setLibraryResources((current) => [{ ...resource, id: Date.now() }, ...current]);
+  }, []);
+
+  const deleteLibraryResource = useCallback((resourceId) => {
+    setLibraryResources((current) => current.filter((resource) => resource.id !== resourceId));
+  }, []);
+
   const value = useMemo(() => ({
     selectedRole, setSelectedRole, isAuthenticated, learnerName, setLearnerName, learnerId, setLearnerId, learnerEmail, setLearnerEmail, studentProfile, setStudentProfile, profile, setProfile, courses, enrolledCourseIds, completedLessons, publishedCourses,
-    signIn, signOut, enrollCourse, toggleLesson, getCourseProgress, publishCourse, language, setLanguage, theme, setTheme, translations,
-  }), [selectedRole, isAuthenticated, learnerName, learnerId, learnerEmail, studentProfile, profile, courses, enrolledCourseIds, completedLessons, publishedCourses, signIn, signOut, enrollCourse, toggleLesson, getCourseProgress, publishCourse, language, theme]);
+    signIn, signOut, enrollCourse, toggleLesson, getCourseProgress, publishCourse, deleteCourse, libraryResources, addLibraryResource, deleteLibraryResource, notifications, setNotifications, language, setLanguage, theme, setTheme, translations,
+  }), [selectedRole, isAuthenticated, learnerName, learnerId, learnerEmail, studentProfile, profile, courses, enrolledCourseIds, completedLessons, publishedCourses, deleteCourse, libraryResources, addLibraryResource, deleteLibraryResource, notifications, signIn, signOut, enrollCourse, toggleLesson, getCourseProgress, publishCourse, language, theme]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

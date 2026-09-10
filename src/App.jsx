@@ -9,14 +9,12 @@ import InstructorDashboard from "./pages/dashboard-instructor";
 import Login from "./pages/login";
 import Fieldwork from "./pages/fieldwork";  
 import Library from "./pages/library.jsx";
+import AdminDashboard from "./pages/dashboard-admin";
 
-function DashboardRoute({ role, children }) {
-  const { isAuthenticated, selectedRole } = useAppContext();
+function DashboardRoute({ children }) {
+  const { isAuthenticated } = useAppContext();
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (selectedRole !== role) {
-    return <Navigate to={selectedRole === "instructor" ? "/dashboard/instructor" : "/dashboard/student"} replace />;
-  }
 
   return children;
 }
@@ -37,6 +35,9 @@ function App() {
             <Route path="dashboard/enseignant" element={<DashboardRoute role="instructor"><InstructorDashboard /></DashboardRoute>} />
             <Route path="dashboard-instructor" element={<DashboardRoute role="instructor"><InstructorDashboard /></DashboardRoute>} />
             <Route path="dashboard-instructeur" element={<DashboardRoute role="instructor"><InstructorDashboard /></DashboardRoute>} />
+            <Route path="dashboard/admin" element={<DashboardRoute role="admin"><AdminDashboard /></DashboardRoute>} />
+            <Route path="dashboard-admin" element={<DashboardRoute role="admin"><AdminDashboard /></DashboardRoute>} />
+            <Route path="dashboard-administrateur" element={<DashboardRoute role="admin"><AdminDashboard /></DashboardRoute>} />
             <Route path="fieldwork" element={<Fieldwork />} />
             <Route path="register" element={<Login />} />
             <Route path="login" element={<Login />} />

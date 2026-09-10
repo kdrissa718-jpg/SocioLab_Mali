@@ -1,13 +1,14 @@
 ﻿import { useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import { UserRound, X } from "lucide-react";
-import { LogOut } from "lucide-react";
+import { BookOpen, ClipboardCheck, Layers3, LogOut, Plus, UserRound, UsersRound, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from "../components/notification-bell";
 
 function InstructorDashboard() {
   const navigate = useNavigate();
   const { courses, publishedCourses, publishCourse, language, translations, learnerName, profile, setProfile, signOut } = useAppContext();
   const content = translations[language];
+  const instructorName = ["Apprenant SocioLab", "Apprenant SocioLab Mali"].includes(learnerName) ? "Enseignant SocioLab Mali" : learnerName;
   const emptyCourse = { title: "", category: content.instructorDashboard.form.categories.sociology, description: "", teacher: "", imageUrl: "", imageName: "", videoUrl: "", videoName: "", videoSource: "", pdfUrl: "", pdfName: "", pdfSource: "", fieldwork: { concept: "", prompts: [""] }, modules: [{ title: "Module 1", hours: 2, lessons: [""] }] };
 
    // creer une table pour les categories et cree un enum pour chaque categories sachant que elle peuvent tous avoir des sous categorie
@@ -107,15 +108,26 @@ function InstructorDashboard() {
     navigate("/login", { replace: true });
   };
 
+  const focusCourseBuilder = () => document.getElementById("course-builder")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
   return (
-    <section className="page-section">
-      <div className="page-heading"><div><span className="eyebrow">{content.instructorDashboard.eyebrow}</span><h1>{content.instructorDashboard.title}</h1><p>{content.instructorDashboard.description}</p><p className="dashboard-welcome">{content.common.welcomeMessage.replace("{name}", learnerName)}</p></div><div className="dashboard-heading-actions"><button className="profile-menu-trigger" type="button" onClick={() => setIsProfileEditorOpen(true)} aria-label="Modifier mon profil" title="Modifier mon profil">{profile.photoUrl ? <img src={profile.photoUrl} alt="" /> : <UserRound size={20} aria-hidden="true" />}</button><button className="btn btn-outline dashboard-logout" type="button" onClick={handleSignOut}><LogOut size={18} aria-hidden="true" />{content.common.logout}</button></div></div>
-      <div className="dashboard-cards">
-        <article className="metric-card"><p>{content.instructorDashboard.publishedCourses}</p><strong>{published.length}</strong></article>
-        <article className="metric-card"><p>{content.instructorDashboard.enrolledStudents}</p><strong>{totalStudents}</strong></article>
-        <article className="metric-card"><p>{content.instructorDashboard.proposedActivities}</p><strong>{published.reduce((sum, item) => sum + item.lessons, 0)}</strong></article>
+    <section className="page-section instructor-dashboard">
+      <header className="instructor-hero">
+        <div className="instructor-hero-copy"><span className="eyebrow">{content.instructorDashboard.eyebrow}</span><h1>{content.instructorDashboard.title}</h1><p>{content.instructorDashboard.description}</p><p className="dashboard-welcome">{content.common.welcomeMessage.replace("{name}", instructorName)}</p></div>
+        <div className="dashboard-heading-actions"><NotificationBell audience="Enseignants" /><button className="profile-menu-trigger" type="button" onClick={() => setIsProfileEditorOpen(true)} aria-label="Modifier mon profil" title="Modifier mon profil">{profile.photoUrl ? <img src={profile.photoUrl} alt="" /> : <UserRound size={20} aria-hidden="true" />}</button><button className="btn btn-outline dashboard-logout" type="button" onClick={handleSignOut}><LogOut size={18} aria-hidden="true" />{content.common.logout}</button></div>
+      </header>
+      <div className="dashboard-cards instructor-metrics">
+        <article className="metric-card"><span className="instructor-metric-icon"><BookOpen size={20} aria-hidden="true" /></span><p>{content.instructorDashboard.publishedCourses}</p><strong>{published.length}</strong></article>
+        <article className="metric-card"><span className="instructor-metric-icon"><UsersRound size={20} aria-hidden="true" /></span><p>{content.instructorDashboard.enrolledStudents}</p><strong>{totalStudents}</strong></article>
+        <article className="metric-card"><span className="instructor-metric-icon"><ClipboardCheck size={20} aria-hidden="true" /></span><p>{content.instructorDashboard.proposedActivities}</p><strong>{published.reduce((sum, item) => sum + item.lessons, 0)}</strong></article>
       </div>
-      <section className="section-panel"><div className="panel-header"><h2>{content.instructorDashboard.myCourses}</h2></div><div className="course-grid">{published.map((item) => <article key={item.id} className="course-card"><div className="course-card-meta"><span>{item.category}</span><strong>{item.students} {content.common.students}</strong></div><h2>{item.title}</h2><p>{content.instructorDashboard.courseSummary.replace("{count}", item.modules.length).replace("{activities}", item.lessons).replace("{duration}", item.duration)}</p><div className="progress-bar"><div style={{ width: `${item.progress}%` }} /></div></article>)}</div></section>
+      <div className="instructor-main-grid">
+        <section className="section-panel instructor-courses-panel"><div className="panel-header"><div><span className="eyebrow">{content.instructorDashboard.publishedCourses}</span><h2>{content.instructorDashboard.myCourses}</h2></div><button className="btn btn-secondary instructor-add-button" type="button" onClick={focusCourseBuilder}><Plus size={17} aria-hidden="true" />{content.instructorDashboard.form.creation}</button></div><div className="course-grid">{published.length ? published.map((item) => <article key={item.id} className="course-card"><div className="course-card-meta"><span>{item.category}</span><strong>{item.students} {content.common.students}</strong></div><h2>{item.title}</h2><p>{content.instructorDashboard.courseSummary.replace("{count}", item.modules.length).replace("{activities}", item.lessons).replace("{duration}", item.duration)}</p><div className="progress-bar"><div style={{ width: `${item.progress}%` }} /></div></article>) : <div className="instructor-empty-courses"><Layers3 size={28} aria-hidden="true" /><h3>{content.instructorDashboard.myCourses}</h3><p>{content.instructorDashboard.form.creation}</p><button className="btn btn-primary" type="button" onClick={focusCourseBuilder}><Plus size={17} aria-hidden="true" />{content.instructorDashboard.form.publish}</button></div>}</div></section>
+        <aside className="instructor-side-column">
+          <section className="instructor-profile-card"><div className="panel-header"><div><span className="eyebrow">{content.instructorDashboard.profileSectionLabel}</span><h2>{content.instructorDashboard.profileTitle}</h2></div><button className="modal-close-button" type="button" onClick={() => setIsProfileEditorOpen(true)} aria-label="Modifier mon profil" title="Modifier mon profil"><UserRound size={18} aria-hidden="true" /></button></div><div className="profile-preview-meta"><div className="profile-avatar">{profile.photoUrl ? <img src={profile.photoUrl} alt={profile.name || instructorName} /> : <span>{profile.emoji || "👩‍🏫"}</span>}</div><div><h3>{profile.name || instructorName}</h3><p>{content.instructorDashboard.profilePreviewSubtitle}</p></div></div><p className="instructor-profile-description">{profile.description || content.instructorDashboard.profileDescriptionPlaceholder}</p><p className="profile-preview-address">📍 {profile.address || content.instructorDashboard.profileAddressPlaceholder}</p></section>
+          <section className="instructor-quick-panel"><span className="instructor-quick-icon"><Layers3 size={19} aria-hidden="true" /></span><div><h2>{content.instructorDashboard.createTitle}</h2><p>{content.instructorDashboard.form.mediaHelp}</p><button className="secondary-link text-button" type="button" onClick={focusCourseBuilder}>{content.instructorDashboard.form.creation} <span aria-hidden="true">→</span></button></div></section>
+        </aside>
+      </div>
       {isProfileEditorOpen && (
         <div className="profile-modal-backdrop" role="presentation" onMouseDown={() => setIsProfileEditorOpen(false)}>
           <section className="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title" onMouseDown={(event) => event.stopPropagation()}>
@@ -131,7 +143,7 @@ function InstructorDashboard() {
             </div>
             <div className="profile-field">
               <label htmlFor="profile-name">Nom affiché</label>
-              <input id="profile-name" value={profileForm.name || learnerName} onChange={(event) => setProfileForm((current) => ({ ...current, name: event.target.value }))} placeholder={learnerName} />
+              <input id="profile-name" value={profileForm.name || instructorName} onChange={(event) => setProfileForm((current) => ({ ...current, name: event.target.value }))} placeholder={instructorName} />
             </div>
             <div className="profile-field">
               <label htmlFor="profile-emoji">{content.instructorDashboard.profileEmojiLabel}</label>
@@ -149,9 +161,9 @@ function InstructorDashboard() {
           </div>
           <aside className="profile-preview-panel">
             <div className="profile-preview-meta">
-              <div className="profile-avatar">{profileForm.photoUrl ? <img src={profileForm.photoUrl} alt={learnerName} /> : <span>{profileForm.emoji || "👩‍🏫"}</span>}</div>
+              <div className="profile-avatar">{profileForm.photoUrl ? <img src={profileForm.photoUrl} alt={instructorName} /> : <span>{profileForm.emoji || "👩‍🏫"}</span>}</div>
               <div>
-                <h3>{profileForm.name || learnerName}</h3>
+                <h3>{profileForm.name || instructorName}</h3>
                 <p>{content.instructorDashboard.profilePreviewSubtitle}</p>
               </div>
             </div>
@@ -162,7 +174,7 @@ function InstructorDashboard() {
           </section>
         </div>
       )}
-      <section className="workflow-card instructor-action"><div className="panel-header"><div><span className="eyebrow">{content.instructorDashboard.form.creation}</span><h2>{content.instructorDashboard.createTitle}</h2></div></div>{notice && <p className="success-note">{notice}</p>}
+      <section id="course-builder" className="workflow-card instructor-action"><div className="panel-header"><div><span className="eyebrow">{content.instructorDashboard.form.creation}</span><h2>{content.instructorDashboard.createTitle}</h2><p className="builder-intro">{content.instructorDashboard.description}</p></div></div>{notice && <p className="success-note">{notice}</p>}
         <form className="course-builder" onSubmit={submit}>
           <input required value={course.title} placeholder={content.instructorDashboard.form.titlePlaceholder} onChange={(event) => setCourse({ ...course, title: event.target.value })} />
           <select value={course.category} onChange={(event) => setCourse({ ...course, category: event.target.value })}>{categoryOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>

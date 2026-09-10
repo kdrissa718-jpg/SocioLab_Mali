@@ -3,11 +3,6 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import "./home.css";
 import heroImage from "../assets/img1.jpg";
-import heroImage1 from "../assets/img2.jpg";
-import heroImage2 from "../assets/img3.jpg";
-import heroImage3 from "../assets/img4.jpg";
-import heroImage4 from "../assets/img5.jpg";
-
 import heroSlide1 from "../assets/img0005.jpg";
 import heroSlide2 from "../assets/img0006.jpg";
 import heroSlide3 from "../assets/img01.jpg";

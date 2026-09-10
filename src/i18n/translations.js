@@ -265,10 +265,6 @@ export const translations = {
         specialty: "Spécialité", 
         specialtyPlaceholder: "Ex. Sociologie, Philosophie", 
         interestPlaceholder: "Ex. Histoire, Psychologie",
-        password: "Mot de passe",
-        passwordPlaceholder: "Votre mot de passe", 
-        stayLoggedIn: "Rester connecté",
-        forgotPassword: "Mot de passe oublié ?",  
       },
       actions: {
         createAccount: "Créer mon compte", 
