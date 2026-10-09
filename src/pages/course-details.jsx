@@ -1,5 +1,7 @@
 ﻿import { useParams, Link } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
+import { getCategoryLabel } from "../i18n/translations";
+import { getLocalizedCourse } from "../i18n/course-content";
 
 function getVideoEmbedUrl(url) {
   if (!url) return "";
@@ -30,6 +32,7 @@ function CourseDetails() {
   }
 
   const isEnrolled = enrolledCourseIds.includes(course.id);
+  const localizedCourse = getLocalizedCourse(course, language);
   const videoEmbedUrl = getVideoEmbedUrl(course.videoUrl);
   const isUploadedVideo = course.videoSource === "upload";
 
@@ -37,9 +40,9 @@ function CourseDetails() {
     <section className="page-section page-card reveal-section">
       <div className="course-detail-header">
         <div>
-          <span className="eyebrow">{course.category}</span>
-          <h1>{course.title}</h1>
-          <p>{course.description}</p>
+          <span className="eyebrow">{getCategoryLabel(content, course.category)}</span>
+          <h1>{localizedCourse.title}</h1>
+          <p>{localizedCourse.description}</p>
         </div>
         <div className="course-detail-meta">
           <div>
@@ -67,19 +70,19 @@ function CourseDetails() {
           {isEnrolled ? content.common.alreadyEnrolled : content.common.register}
         </button>
         <Link to="/courses" className="secondary-link">
-          Retour au catalogue
+          {content.common.backToCatalog}
         </Link>
       </div>
       <section className="fieldwork-callout">
-        <div><span className="eyebrow">{content.courseDetails.practiceLabel}</span><h2>{content.courseDetails.fieldworkTitle} {course.fieldwork?.concept}</h2><p>{content.courseDetails.fieldworkDescription}</p></div>
+        <div><span className="eyebrow">{content.courseDetails.practiceLabel}</span><h2>{content.courseDetails.fieldworkTitle} {localizedCourse.fieldwork?.concept}</h2><p>{content.courseDetails.fieldworkDescription}</p></div>
         <Link className="btn btn-secondary" to="/fieldwork">{content.courseDetails.fieldworkCta}</Link>
       </section>
       <section className="curriculum-section">
         <div className="panel-header"><div><span className="eyebrow">{content.courseDetails.curriculumTitle}</span><h2>{content.courseDetails.curriculumSubtitle}</h2></div>{isEnrolled && <strong>{getCourseProgress(course)}% {content.common.completed}</strong>}</div>
         <div className="curriculum-list">
-          {course.modules.map((module) => (
+          {localizedCourse.modules.map((module) => (
             <article key={module.id} className="curriculum-module">
-              {module.imageUrl && <img className="module-image" src={module.imageUrl} alt={`Illustration : ${module.title}`} />}
+              {module.imageUrl && <img className="module-image" src={module.imageUrl} alt={`${language === "en" ? "Illustration:" : "Illustration :"} ${module.title}`} />}
               <div className="module-heading"><h3>{module.title}</h3><span>{module.hours} h</span></div>
               {module.lessons.map((lesson, index) => {
                 const lessonKey = `${module.id}-${index}`;

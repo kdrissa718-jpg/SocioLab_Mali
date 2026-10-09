@@ -9,6 +9,7 @@ function Layout() {
   const location = useLocation();
   const content = translations[language];
   const isDarkMode = theme === "dark";
+  const isDashboard = location.pathname.startsWith("/dashboard");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   useEffect(() => {
     const targets = document.querySelectorAll(".reveal-section");
@@ -29,7 +30,7 @@ function Layout() {
 
   return (
     <div className="app-frame">
-      <header className="topbar">
+      {!isDashboard && <header className="topbar">
         <NavLink className="brand" to="/" end>
           <img src={logo} alt="SocioLab logo" className="brand-logo" />
           <div>
@@ -69,12 +70,16 @@ function Layout() {
             <option value="en">{content.common.english}</option>
           </select>
         </nav>
-      </header>
+      </header>}
       <main className="page-shell">
         <Outlet />
       </main>
       <footer className="site-footer">
         <p>{content.layout.footer}</p>
+        <div className="footer-links">
+          <NavLink to="/conditions-utilisation">CGU</NavLink>
+          <NavLink to="/politique-confidentialite">Politique de confidentialité</NavLink>
+        </div>
       </footer>
     </div>
   );

@@ -81,7 +81,7 @@ function AiAssistant({
   return (
     <section
       className="ai-assistant"
-      aria-label="Assistant IA SocioLab"
+      aria-label={content.aiAssistant.ariaLabel}
     >
       <div className="ai-assistant-header">
         <div>
@@ -120,7 +120,7 @@ function AiAssistant({
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder={content.aiAssistant.placeholder}
-          aria-label="Your question"
+          aria-label={content.aiAssistant.questionLabel}
           disabled={loading}
         />
 

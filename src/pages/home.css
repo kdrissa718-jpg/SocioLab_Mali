@@ -436,6 +436,87 @@
   border-color: rgba(255, 255, 255, 0.8);
 }
 
+html[data-theme="dark"] .home-page .section-block,
+html[data-theme="dark"] .home-page .contact-section {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: 0 20px 40px rgba(2, 8, 23, 0.45);
+}
+
+html[data-theme="dark"] .home-page .section-block--featured {
+  background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+}
+
+html[data-theme="dark"] .home-page .section-heading h2,
+html[data-theme="dark"] .home-page .domain-card h3,
+html[data-theme="dark"] .home-page .course-card h3,
+html[data-theme="dark"] .home-page .home-module-card h3,
+html[data-theme="dark"] .home-page .info-panel h3,
+html[data-theme="dark"] .home-page .hero-card h2,
+html[data-theme="dark"] .home-page .footer-links h4 {
+  color: var(--text);
+}
+
+html[data-theme="dark"] .home-page .domain-card,
+html[data-theme="dark"] .home-page .home-course-card,
+html[data-theme="dark"] .home-page .home-module-card,
+html[data-theme="dark"] .home-page .info-panel,
+html[data-theme="dark"] .home-page .hero-card,
+html[data-theme="dark"] .home-page .search-box {
+  background: var(--bg-surface-alt);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .home-page .hero-card p {
+  color: var(--text-muted);
+}
+
+html[data-theme="dark"] .home-page .section-heading .eyebrow {
+  color: #fdba74;
+}
+
+html[data-theme="dark"] .home-page .search-panel {
+  background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+  border-color: var(--border);
+}
+
+html[data-theme="dark"] .home-page .search-box input {
+  background: transparent;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .home-page .search-box input::placeholder {
+  color: var(--text-light);
+}
+
+html[data-theme="dark"] .home-page .domain-card p,
+html[data-theme="dark"] .home-page .course-card p,
+html[data-theme="dark"] .home-page .home-module-card p,
+html[data-theme="dark"] .home-page .info-panel:not(.info-panel--accent) p,
+html[data-theme="dark"] .home-page .footer-links a,
+html[data-theme="dark"] .home-page .footer-links p,
+html[data-theme="dark"] .home-page .home-footer > p {
+  color: var(--text-muted);
+}
+
+html[data-theme="dark"] .home-page .home-module-card span,
+html[data-theme="dark"] .home-page .text-link {
+  color: #93c5fd;
+}
+
+html[data-theme="dark"] .home-page .info-panel--accent {
+  background: linear-gradient(135deg, #111827 0%, #1e3a8a 100%);
+  border-color: rgba(147, 197, 253, 0.2);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .home-page .career-section {
+  background: linear-gradient(135deg, #0b1220 0%, #111827 100%);
+  border: 1px solid var(--border);
+}
+
 @media (max-width: 1040px) {
   .hero-section,
   .career-section {

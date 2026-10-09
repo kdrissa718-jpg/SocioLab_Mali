@@ -7,9 +7,32 @@ import guideImage from "../assets/guideimage.jpg";
 import reportImage from "../assets/rapportimage.jpg";
 import memoireImage from "../assets/memoireimage.jpg";
 import libraryHeroImage from "../assets/bibliotheque.jpg";
+import { getLocalizedResource } from "../i18n/library-content";
 import "./library.css";
 function Library() {
-  const { language, libraryResources } = useAppContext();
+  const { language, translations, libraryResources } = useAppContext();
+  const content = translations[language];
+  const categoryLabels = {
+    Sociologie: content.library.categories.sociology,
+    Psychologie: content.library.categories.psychology,
+    Philosophie: content.library.categories.philosophy,
+    Méthodologie: content.library.categories.methodology,
+    Histoire: content.library.categories.history,
+    Géographie: content.library.categories.geography,
+    Anthropologie: content.library.categories.anthropology,
+    "Sciences politiques": content.library.categories.politicalScience,
+    Économie: content.library.categories.economy,
+    Communication: content.library.categories.communication,
+    Éducation: content.library.categories.education,
+  };
+  const typeLabels = {
+    Livre: content.library.types.book,
+    Rapport: content.library.types.report,
+    "Article scientifique": content.library.types.article,
+    Thèse: content.library.types.thesis,
+    Guide: content.library.types.guide,
+    Mémoire: content.library.types.dissertation,
+  };
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Toutes");
@@ -32,8 +55,11 @@ function Library() {
       const matchesSearch =
         !query ||
         String(resource.title || "").toLowerCase().includes(query) ||
+        String(resource.titleEn || "").toLowerCase().includes(query) ||
         String(resource.author || "").toLowerCase().includes(query) ||
-        String(resource.description || "").toLowerCase().includes(query);
+        String(resource.authorEn || "").toLowerCase().includes(query) ||
+        String(resource.description || "").toLowerCase().includes(query) ||
+        String(resource.descriptionEn || "").toLowerCase().includes(query);
 
       const matchesCategory =
         category === "Toutes" || resource.category === category;
@@ -51,17 +77,8 @@ function Library() {
         <div>
           <span className="eyebrow">SocioLab Mali</span>
 
-          <h1>
-            {language === "fr"
-              ? "Bibliothèque"
-              : "Library"}
-          </h1>
-
-          <p>
-            {language === "fr"
-              ? "Découvrez des livres, articles, mémoires, guides et ressources pour approfondir vos connaissances en sciences humaines et sociales."
-              : "Discover books, articles, theses, guides and resources to deepen your knowledge of humanities and social sciences."}
-          </p>
+          <h1>{content.library.title}</h1>
+          <p>{content.library.description}</p>
         </div>
       </div>
 
@@ -71,17 +88,13 @@ function Library() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder={
-              language === "fr"
-                ? "Rechercher une ressource..."
-                : "Search for a resource..."
-            }
+            placeholder={content.library.search}
           />
         </div>
 
         <div className="library-filters">
           <label>
-            {language === "fr" ? "Discipline" : "Discipline"}
+            {content.library.discipline}
 
             <select
               value={category}
@@ -89,14 +102,14 @@ function Library() {
             >
               {categories.map((item) => (
                 <option key={item} value={item}>
-                  {item}
+                  {item === "Toutes" ? content.library.allCategories : categoryLabels[item] || item}
                 </option>
               ))}
             </select>
           </label>
 
           <label>
-            {language === "fr" ? "Type" : "Type"}
+            {content.library.type}
 
             <select
               value={type}
@@ -104,7 +117,7 @@ function Library() {
             >
               {types.map((item) => (
                 <option key={item} value={item}>
-                  {item}
+                  {item === "Tous" ? content.library.allTypes : typeLabels[item] || item}
                 </option>
               ))}
             </select>
@@ -115,64 +128,52 @@ function Library() {
       <div className="library-results-header">
         <div>
           <span className="eyebrow">
-            {language === "fr" ? "Ressources" : "Resources"}
+            {content.library.resources}
           </span>
 
-          <h2>
-            {filteredResources.length}{" "}
-            {language === "fr"
-              ? "ressource(s) disponible(s)"
-              : "resource(s) available"}
-          </h2>
+          <h2>{filteredResources.length} {content.library.available}</h2>
         </div>
       </div>
 
       {filteredResources.length === 0 ? (
         <div className="empty-state">
-          <h2>
-            {language === "fr"
-              ? "Aucune ressource trouvée"
-              : "No resource found"}
-          </h2>
-
-          <p>
-            {language === "fr"
-              ? "Essayez une autre recherche ou modifiez les filtres."
-              : "Try another search or change the filters."}
-          </p>
+          <h2>{content.library.emptyTitle}</h2>
+          <p>{content.library.emptyDescription}</p>
         </div>
       ) : (
         <div className="course-grid library-grid">
-          {filteredResources.map((resource) => (
+          {filteredResources.map((resource) => {
+            const localizedResource = getLocalizedResource(resource, language);
+            return (
             <article
               key={resource.id}
               className="course-card library-card"
             >
               <div className="course-card-meta">
-                <span>{resource.type}</span>
+                <span>{typeLabels[resource.type] || resource.type}</span>
                 <strong>{resource.year || "-"}</strong>
               </div>
 
             
           
                 <div className="library-resource-icon">
-  {resource.coverUrl ? <img src={resource.coverUrl} alt={`Couverture : ${resource.title}`} /> : resource.type === "Livre" ? <img src={bookImage} alt="Livre" /> : resource.type === "Rapport" ? <img src={reportImage} alt="Rapport" /> : resource.type === "Article scientifique" ? <img src={articleImage} alt="Article scientifique" /> : resource.type === "Thèse" ? <img src={thesisImage} alt="Thèse" /> : resource.type === "Guide" ? <img src={guideImage} alt="Guide" /> : <img src={memoireImage} alt="Mémoire" />}
+  {resource.coverUrl ? <img src={resource.coverUrl} alt={`${content.library.cover} ${localizedResource.title}`} /> : resource.type === "Livre" ? <img src={bookImage} alt={typeLabels.Livre} /> : resource.type === "Rapport" ? <img src={reportImage} alt={typeLabels.Rapport} /> : resource.type === "Article scientifique" ? <img src={articleImage} alt={typeLabels["Article scientifique"]} /> : resource.type === "Thèse" ? <img src={thesisImage} alt={typeLabels.Thèse} /> : resource.type === "Guide" ? <img src={guideImage} alt={typeLabels.Guide} /> : <img src={memoireImage} alt={typeLabels.Mémoire} />}
     
       
               </div>
 
               <span className="library-category">
-                {resource.category}
+                {resource.categoryEn || categoryLabels[resource.category] || localizedResource.category}
               </span>
 
-              <h2>{resource.title}</h2>
+              <h2>{localizedResource.title}</h2>
 
               <p className="library-author">
-                {language === "fr" ? "Auteur :" : "Author :"}{" "}
-                <strong>{resource.author}</strong>
+                {content.library.author}{" "}
+                <strong>{localizedResource.author}</strong>
               </p>
 
-              <p>{resource.description || "Ressource pédagogique SocioLab."}</p>
+              <p>{localizedResource.description || content.library.defaultDescription}</p>
 
               <div className="course-card-footer">
                 <span className="library-format">
@@ -185,11 +186,12 @@ function Library() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {language === "fr" ? "Consulter" : "Open"}
+                  {content.library.open}
                 </a>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>

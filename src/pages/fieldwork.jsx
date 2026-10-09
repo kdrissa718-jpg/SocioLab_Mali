@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import AiAssistant from "../components/ai-assistant";
+import { getCategoryLabel } from "../i18n/translations";
+import { getLocalizedCourse } from "../i18n/course-content";
 
 const stopWords = new Set(["avec", "dans", "pour", "mais", "sont", "plus", "nous", "vous", "elles", "leurs", "cette", "cela", "comme", "aussi", "être", "avoir", "entre", "ainsi", "sur", "une", "des", "les", "que", "qui"]);
 const median = (values) => { const sorted = [...values].sort((a, b) => a - b); const middle = Math.floor(sorted.length / 2); return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2; };
@@ -13,6 +15,7 @@ function Fieldwork() {
   const [data, setData] = useState("");
   const [result, setResult] = useState(null);
   const course = useMemo(() => courses.find((item) => item.id === Number(courseId)) || courses[0], [courses, courseId]);
+  const localizedCourse = getLocalizedCourse(course, language);
 
   const analyze = () => {
     if (!data.trim()) return;
@@ -35,8 +38,8 @@ function Fieldwork() {
     <div className="page-heading"><div><span className="eyebrow">{content.fieldwork.eyebrow}</span><h1>{content.fieldwork.title}</h1><p>{content.fieldwork.description}</p></div></div>
     <div className="fieldwork-layout">
       <form className="fieldwork-form" onSubmit={(event) => { event.preventDefault(); analyze(); }}>
-        <label>{content.fieldwork.discipline}<select value={courseId} onChange={(event) => { setCourseId(event.target.value); setResult(null); }}>{courses.map((item) => <option key={item.id} value={item.id}>{item.category} — {item.title}</option>)}</select></label>
-        <article className="concept-card"><img src={course.imageUrl} alt="Illustration du concept" /><div><span>{content.fieldwork.conceptTitle}</span><h2>{course.fieldwork?.concept || content.fieldwork.conceptDefault}</h2>{course.fieldwork?.prompts.map((prompt) => <p key={prompt}>• {prompt}</p>)}</div></article>
+        <label>{content.fieldwork.discipline}<select value={courseId} onChange={(event) => { setCourseId(event.target.value); setResult(null); }}>{courses.map((item) => <option key={item.id} value={item.id}>{getCategoryLabel(translations[language], item.category)} — {getLocalizedCourse(item, language).title}</option>)}</select></label>
+        <article className="concept-card"><img src={course.imageUrl} alt={language === "fr" ? "Illustration du concept" : "Concept illustration"} /><div><span>{content.fieldwork.conceptTitle}</span><h2>{localizedCourse.fieldwork?.concept || content.fieldwork.conceptDefault}</h2>{localizedCourse.fieldwork?.prompts.map((prompt) => <p key={prompt}>• {prompt}</p>)}</div></article>
         <label>{content.fieldwork.methodLabel}<select value={method} onChange={(event) => setMethod(event.target.value)}><option value="qualitative">{content.fieldwork.qualitativeOption}</option><option value="quantitative">{content.fieldwork.quantitativeOption}</option><option value="statistique">{content.fieldwork.descriptiveOption}</option></select></label>
         <label>{method === "qualitative" ? content.fieldwork.qualitativePlaceholder : content.fieldwork.quantitativePlaceholder}<textarea value={data} onChange={(event) => setData(event.target.value)} placeholder={method === "qualitative" ? content.fieldwork.qualitativeHint : content.fieldwork.quantitativeHint} required /></label>
         <button className="btn btn-primary" type="submit">{content.fieldwork.analyze}</button>
@@ -48,10 +51,10 @@ function Fieldwork() {
   <AiAssistant
   mode="field-research"
   context={content.fieldwork.aiContext
-    .replace("{course}", course.title)
+    .replace("{course}", localizedCourse.title)
     .replace(
       "{concept}",
-      course.fieldwork?.concept || "à définir"
+      localizedCourse.fieldwork?.concept || content.fieldwork.conceptDefault
     )
     .replace("{method}", method)}
   title={content.fieldwork.aiTitle}

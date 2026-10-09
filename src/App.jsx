@@ -9,7 +9,10 @@ import InstructorDashboard from "./pages/dashboard-instructor";
 import Login from "./pages/login";
 import Fieldwork from "./pages/fieldwork";  
 import Library from "./pages/library.jsx";
+import TermsOfUsePage from "./pages/terms";
+import PrivacyPolicyPage from "./pages/privacy";
 import AdminDashboard from "./pages/dashboard-admin";
+import AttestationVerification from "./pages/attestation-verification";
 
 function DashboardRoute({ children, role }) {
   const { isAuthenticated, selectedRole } = useAppContext();
@@ -29,7 +32,7 @@ function App() {
             <Route path="courses" element={<Courses />} />
             <Route path="course/:id" element={<CourseDetails />} />
             <Route path="dashboard/student" element={<DashboardRoute role="student"><StudentDashboard /></DashboardRoute>} />
-            <Route path="dashboard/etudiant" element={<DashboardRoute role="student"><StudentDashboard /></DashboardRoute>} />
+            <Route path="dashboard/etudiant/*" element={<DashboardRoute role="student"><StudentDashboard /></DashboardRoute>} />
             <Route path="dashboard-student" element={<DashboardRoute role="student"><StudentDashboard /></DashboardRoute>} />
             <Route path="dashboard/instructor" element={<DashboardRoute role="instructor"><InstructorDashboard /></DashboardRoute>} />
             <Route path="dashboard/enseignant" element={<DashboardRoute role="instructor"><InstructorDashboard /></DashboardRoute>} />
@@ -42,6 +45,12 @@ function App() {
             <Route path="register" element={<Login />} />
             <Route path="login" element={<Login />} />
             <Route path="library" element={<Library />} />
+            <Route path="conditions-utilisation" element={<TermsOfUsePage />} />
+            <Route path="conditions-generales" element={<TermsOfUsePage />} />
+            <Route path="politique-confidentialite" element={<PrivacyPolicyPage />} />
+            <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="terms" element={<TermsOfUsePage />} />
+            <Route path="verifier-attestation/:id" element={<AttestationVerification />} />
           </Route>
         </Routes>
       </BrowserRouter>

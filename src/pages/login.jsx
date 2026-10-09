@@ -72,8 +72,8 @@ function Login() {
 
   const nextLearnerId = `SL-${Date.now().toString().slice(-6)}`;
 
-  const nextName =
-    registerData.fullName?.trim() || "Apprenant SocioLab Mali";
+  const defaultName = registerData.role === "instructor" ? "Enseignant SocioLab Mali" : "Apprenant SocioLab";
+  const nextName = registerData.fullName?.trim() || defaultName;
     //console.log("Nom de l'apprenant :", nextName);
 
   const nextPath =
@@ -103,7 +103,7 @@ const handleLoginSubmit = (event) => {
 
   // Pour l'instant, le formulaire de connexion ne contient
   // pas de champ fullName.
-  const nextName = "Apprenant SocioLab Mali";
+  const nextName = loginData.role === "instructor" ? "Enseignant SocioLab Mali" : "Apprenant SocioLab";
 
   const nextPath =
     loginData.role === "instructor" ? "/dashboard/instructor" : loginData.role === "admin" ? "/dashboard/admin" : "/dashboard/student";

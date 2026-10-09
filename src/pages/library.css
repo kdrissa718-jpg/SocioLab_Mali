@@ -42,11 +42,17 @@
   align-items: end;
   padding: 22px;
   margin-bottom: 45px;
-  border: 1px solid rgba(30, 50, 80, 0.1);
+  border: 1px solid var(--border);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 15px 45px rgba(20, 40, 70, 0.08);
   backdrop-filter: blur(12px);
+}
+
+html[data-theme="dark"] .library-toolbar {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: var(--border);
+  box-shadow: 0 15px 45px rgba(2, 8, 23, 0.5);
 }
 
 /* Recherche */
@@ -74,6 +80,7 @@
   border-radius: 14px;
   outline: none;
   background: #f8fafc;
+  color: var(--text);
   font-size: 0.98rem;
   transition:
     border-color 0.25s ease,
@@ -81,10 +88,22 @@
     background 0.25s ease;
 }
 
+html[data-theme="dark"] .library-search input {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: var(--border);
+  color: var(--text);
+}
+
 .library-search input:focus {
   background: #ffffff;
   border-color: #4169e1;
   box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.1);
+}
+
+html[data-theme="dark"] .library-search input:focus {
+  background: rgba(15, 23, 42, 1);
+  border-color: rgba(96, 165, 250, 0.8);
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
 }
 
 /* Filtres */
@@ -104,6 +123,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.7;
+  color: var(--text-muted);
 }
 
 .library-filters select {
@@ -112,15 +132,26 @@
   border: 1px solid rgba(30, 50, 80, 0.14);
   border-radius: 14px;
   background: #f8fafc;
-  color: inherit;
+  color: var(--text);
   font-size: 0.92rem;
   cursor: pointer;
   outline: none;
 }
 
+html[data-theme="dark"] .library-filters select {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: var(--border);
+  color: var(--text);
+}
+
 .library-filters select:focus {
   border-color: #4169e1;
   box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.1);
+}
+
+html[data-theme="dark"] .library-filters select:focus {
+  border-color: rgba(96, 165, 250, 0.8);
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
 }
 
 /* =========================================================
@@ -163,6 +194,7 @@
   border: 1px solid rgba(30, 50, 80, 0.09);
   border-radius: 22px;
   background: #ffffff;
+  color: var(--text);
   box-shadow: 0 12px 35px rgba(20, 40, 70, 0.07);
   transition:
     transform 0.3s ease,
@@ -170,10 +202,21 @@
     border-color 0.3s ease;
 }
 
+html[data-theme="dark"] .library-card {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: var(--border);
+  box-shadow: 0 12px 35px rgba(2, 8, 23, 0.45);
+}
+
 .library-card:hover {
   transform: translateY(-7px);
   border-color: rgba(65, 105, 225, 0.18);
   box-shadow: 0 22px 55px rgba(20, 40, 70, 0.14);
+}
+
+html[data-theme="dark"] .library-card:hover {
+  border-color: rgba(96, 165, 250, 0.35);
+  box-shadow: 0 22px 55px rgba(2, 8, 23, 0.58);
 }
 
 /* =========================================================
@@ -200,6 +243,13 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(8px);
   font-size: 0.72rem;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .library-card .course-card-meta span,
+html[data-theme="dark"] .library-card .course-card-meta strong {
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--text);
 }
 
 .library-card .course-card-meta span {
@@ -272,10 +322,15 @@
   font-size: 1.18rem;
   line-height: 1.35;
   font-weight: 750;
+  color: var(--text);
 }
 
 .library-card h2:hover {
   color: #4169e1;
+}
+
+html[data-theme="dark"] .library-card h2:hover {
+  color: #93c5fd;
 }
 
 /* =========================================================
@@ -286,10 +341,12 @@
   margin: 0 22px 10px;
   font-size: 0.88rem;
   opacity: 0.75;
+  color: var(--text-muted);
 }
 
 .library-author strong {
   opacity: 1;
+  color: var(--text);
 }
 
 /* =========================================================
@@ -306,6 +363,10 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+html[data-theme="dark"] .library-card > p:not(.library-author) {
+  color: var(--text-muted);
 }
 
 /* =========================================================
@@ -328,6 +389,11 @@
   color: #475569;
   font-size: 0.75rem;
   font-weight: 700;
+}
+
+html[data-theme="dark"] .library-format {
+  background: rgba(59, 130, 246, 0.12);
+  color: #dbeafe;
 }
 
 .library-card .btn {
@@ -354,13 +420,20 @@
   text-align: center;
 }
 
+html[data-theme="dark"] .library-page .empty-state {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: var(--border);
+}
+
 .library-page .empty-state h2 {
   margin-bottom: 10px;
+  color: var(--text);
 }
 
 .library-page .empty-state p {
   margin: 0;
   opacity: 0.7;
+  color: var(--text-muted);
 }
 
 /* =========================================================
@@ -454,4 +527,8 @@
   position: relative;
   z-index: 1;
   color: white;
+}
+
+html[data-theme="dark"] .library-page .page-heading > div {
+  color: #f8fafc;
 }

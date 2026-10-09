@@ -3,7 +3,8 @@ import { Bell, CheckCheck } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 
 function NotificationBell({ audience = "Tous" }) {
-  const { notifications } = useAppContext();
+  const { notifications, language, translations } = useAppContext();
+  const content = translations[language];
   const [isOpen, setIsOpen] = useState(false);
   const [readIds, setReadIds] = useState(() => {
     try {
@@ -31,13 +32,13 @@ function NotificationBell({ audience = "Tous" }) {
   const markAllAsRead = () => setReadIds((current) => [...new Set([...current, ...visibleNotifications.map((item) => item.id)])]);
 
   return <div className="notification-bell" ref={containerRef}>
-    <button className="admin-icon-button notification-bell-trigger" type="button" onClick={() => setIsOpen((current) => !current)} aria-label="Ouvrir les notifications" aria-expanded={isOpen}>
+    <button className="admin-icon-button notification-bell-trigger" type="button" onClick={() => setIsOpen((current) => !current)} aria-label={content.notifications.open} aria-expanded={isOpen}>
       <Bell size={19} aria-hidden="true" />
       {unreadCount > 0 && <span className="notification-count">{unreadCount > 9 ? "9+" : unreadCount}</span>}
     </button>
-    {isOpen && <div className="notification-popover" role="dialog" aria-label="Notifications">
-      <div className="notification-popover-header"><div><strong>Notifications</strong><small>{unreadCount ? `${unreadCount} non lue(s)` : "Toutes les notifications sont lues"}</small></div><button type="button" onClick={markAllAsRead} title="Tout marquer comme lu" aria-label="Tout marquer comme lu"><CheckCheck size={17} /></button></div>
-      {visibleNotifications.length ? <div className="notification-list">{visibleNotifications.map((item) => <article className={!readIds.includes(item.id) ? "is-unread" : ""} key={item.id} onClick={() => setReadIds((current) => [...new Set([...current, item.id])])}><span className="notification-status-dot" /><div><strong>{item.title}</strong><p>{item.content}</p><small>{item.date}</small></div></article>)}</div> : <p className="notification-empty">Aucune notification.</p>}
+    {isOpen && <div className="notification-popover" role="dialog" aria-label={content.notifications.title}>
+      <div className="notification-popover-header"><div><strong>{content.notifications.title}</strong><small>{unreadCount ? content.notifications.unread.replace("{count}", String(unreadCount)) : content.notifications.allRead}</small></div><button type="button" onClick={markAllAsRead} title={content.notifications.markAllRead} aria-label={content.notifications.markAllRead}><CheckCheck size={17} /></button></div>
+      {visibleNotifications.length ? <div className="notification-list">{visibleNotifications.map((item) => <article className={!readIds.includes(item.id) ? "is-unread" : ""} key={item.id} onClick={() => setReadIds((current) => [...new Set([...current, item.id])])}><span className="notification-status-dot" /><div><strong>{item.title}</strong><p>{item.content}</p><small>{item.date}</small></div></article>)}      </div> : <p className="notification-empty">{content.notifications.empty}</p>}
     </div>}
   </div>;
 }

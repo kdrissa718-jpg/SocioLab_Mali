@@ -1,6 +1,8 @@
 ﻿import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import { getCategoryLabel } from "../i18n/translations";
+import { getLocalizedCourse } from "../i18n/course-content";
 import "./home.css";
 import heroImage from "../assets/img1.jpg";
 import heroSlide1 from "../assets/img0005.jpg";
@@ -23,33 +25,47 @@ const domains = [
 ];
 
 const highlights = [
-  { value: "24+", label: "parcours actifs" },
-  { value: "98%", label: "de satisfaction" },
-  { value: "7j/7", label: "accessibilité" },
+  { value: "24+", key: "active" },
+  { value: "98%", key: "satisfaction" },
+  { value: "7j/7", key: "accessibility" },
 ];
+
+const englishDomains = {
+  Sociologie: ["Sociology", "Understand social dynamics, groups and contemporary change."],
+  Histoire: ["History", "Analyze major periods, collective memories and the issues of the past."],
+  Géographie: ["Geography", "Explore places, territories and relationships between societies and the environment."],
+  Philosophie: ["Philosophy", "Develop critical thinking and the ability to question the world."],
+  Éducation: ["Education", "Study teaching practices and the challenges of learning over time."],
+  "Sciences politiques": ["Political science", "Explore institutions, power and democratic debate."],
+  Anthropologie: ["Anthropology", "Observe cultures, practices and relationships between human groups."],
+  Économie: ["Economics", "Analyze exchange, development and economic inequality."],
+  Communication: ["Communication", "Decode media, public narratives and digital practices."],
+  Méthodologie: ["Methodology", "Design research, collect data and present your findings."],
+  "Genre et Societe": ["Gender and Society", "Examine social relations, identities and issues related to gender and society."],
+};
 
 function Home() {
   const navigate = useNavigate();
     const heroSlides = [
     {
       image: heroSlide1,
-      alt: "Apprentissage en sciences sociales avec SocioLab",
+      alt: "Learning social sciences with SocioLab",
     },
     {
       image: heroSlide2,
-      alt: "Étudiants en formation avec SocioLab",
+      alt: "Students learning with SocioLab",
     },
     {
       image: heroSlide3,
-      alt: "Recherche et enquête de terrain",
+      alt: "Research and fieldwork",
     },
     {
       image: heroSlide4,
-      alt: "Formation numérique et sciences sociales",
+      alt: "Digital learning and social sciences",
     },
     {
       image: heroSlide5,
-      alt: "Apprentissage collaboratif SocioLab",
+      alt: "Collaborative learning with SocioLab",
     },
   ];
 
@@ -76,9 +92,10 @@ function Home() {
       current === 0 ? heroSlides.length - 1 : current - 1
     );
   };
-  const { selectedRole, setSelectedRole, courses: catalogCourses, language, translations } = useAppContext();
+  const { selectedRole, setSelectedRole, courses: catalogCourses, publishedCourses, language, translations } = useAppContext();
   const content = translations[language];
-  const modules = catalogCourses.flatMap((course) => course.modules.map((module) => ({ ...module, courseTitle: course.title, category: course.category })));
+  const visibleCatalogCourses = catalogCourses.filter((course) => course.isPublished || publishedCourses.includes(course.id)).map((course) => getLocalizedCourse(course, language));
+  const modules = visibleCatalogCourses.flatMap((course) => course.modules.map((module) => ({ ...module, courseTitle: course.title, category: course.category })));
                                               
   const handleSelectRole = (role, path) => {
     setSelectedRole(role);
@@ -102,11 +119,11 @@ function Home() {
             </Link>
           </div>
 
-          <div className="hero-stats" aria-label="Statistiques de la plateforme">
+          <div className="hero-stats" aria-label={language === "fr" ? "Statistiques de la plateforme" : "Platform statistics"}>
             {highlights.map((item) => (
-              <div key={item.label}>
+              <div key={item.key}>
                 <strong>{item.value}</strong>
-                <span>{language === "fr" ? item.label : content.home.stats[language === "en" ? (item.label === "parcours actifs" ? "active" : item.label === "de satisfaction" ? "satisfaction" : "accessibility") : ""]}</span>
+                <span>{content.home.stats[item.key]}</span>
               </div>
             ))}
           </div>
@@ -125,7 +142,7 @@ function Home() {
       type="button"
       className="slider-button slider-button--prev"
       onClick={previousSlide}
-      aria-label="Image précédente"
+      aria-label={language === "fr" ? "Image précédente" : "Previous image"}
     >
       ‹
     </button>
@@ -134,7 +151,7 @@ function Home() {
       type="button"
       className="slider-button slider-button--next"
       onClick={nextSlide}
-      aria-label="Image suivante"
+      aria-label={language === "fr" ? "Image suivante" : "Next image"}
     >
       ›
     </button>
@@ -148,7 +165,7 @@ function Home() {
             index === currentSlide ? "active" : ""
           }`}
           onClick={() => setCurrentSlide(index)}
-          aria-label={`Afficher l'image ${index + 1}`}
+          aria-label={language === "fr" ? `Afficher l'image ${index + 1}` : `Show image ${index + 1}`}
           aria-current={index === currentSlide ? "true" : undefined}
         />
       ))}
@@ -205,9 +222,9 @@ function Home() {
         <div className="domain-grid">
           {domains.map((domain) => (
             <article key={domain.title} className="domain-card">
-              <img className="domain-image" src={catalogCourses.find((course) => course.category === domain.title)?.imageUrl || heroImage} alt={`${content.home.domains.imageAlt} ${domain.title}`} onError={(event) => { event.currentTarget.src = heroImage; }} />
-              <h3>{domain.title}</h3>
-              <p>{domain.description}</p>
+              <img className="domain-image" src={catalogCourses.find((course) => course.category === domain.title)?.imageUrl || heroImage} alt={`${content.home.domains.imageAlt} ${language === "en" ? englishDomains[domain.title][0] : domain.title}`} onError={(event) => { event.currentTarget.src = heroImage; }} />
+              <h3>{language === "en" ? englishDomains[domain.title][0] : domain.title}</h3>
+              <p>{language === "en" ? englishDomains[domain.title][1] : domain.description}</p>
             </article>
           ))}
         </div>
@@ -220,8 +237,12 @@ function Home() {
         </div>
 
         <div className="course-grid">
-          {catalogCourses.map((course) => (
+          {visibleCatalogCourses.map((course) => (
             <article key={course.id} className="course-card home-course-card">
+              <div className="course-card-meta course-card-meta--compact">
+                <span>{getCategoryLabel(content, course.category)}</span>
+                {Boolean(course.isPublished || publishedCourses.includes(course.id)) && <span className="course-badge">{content.common.new}</span>}
+              </div>
               <img className="home-course-image" src={course.imageUrl || heroImage} alt={`${content.home.courseImageAlt} ${course.title}`} onError={(event) => { event.currentTarget.src = heroImage; }} />
               <h3>{course.title}</h3>
               <p>{course.description}</p>
@@ -242,7 +263,7 @@ function Home() {
           {modules.map((module) => (
             <article key={module.id} className="home-module-card">
               <img src={module.imageUrl || heroImage} alt={`${content.home.moduleImageAlt} ${module.title}`} onError={(event) => { event.currentTarget.src = heroImage; }} />
-              <div><span>{module.category} · {module.hours} h</span><h3>{module.title}</h3><p>{module.courseTitle}</p></div>
+              <div><span>{getCategoryLabel(content, module.category)} · {module.hours} h</span><h3>{module.title}</h3><p>{module.courseTitle}</p></div>
             </article>
           ))}
         </div>
@@ -308,11 +329,11 @@ function Home() {
               <span>✉️</span>
               <span>kdrissa718@gmail.com</span>
             </a>
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="contact-item">
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="contact-item" aria-label={language === "fr" ? "Page Facebook" : "Facebook page"}>
               <span>📘</span>
               <span>Facebook</span>
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="contact-item">
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="contact-item" aria-label={language === "fr" ? "Page LinkedIn" : "LinkedIn page"}>
               <span>🔗</span>
               <span>LinkedIn</span>
             </a>

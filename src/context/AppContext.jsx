@@ -3,17 +3,17 @@ import defaultCourses from "../data/courses";
 import defaultLibraryResources from "../pages/library.js";
 import { defaultLanguage, translations } from "../i18n/translations";
 
-const AppContext = createContext(null);
+const AppContext = createContext(null); 
 
 export function AppProvider({ children }) {
   const [selectedRole, setSelectedRole] = useState(() => sessionStorage.getItem("sociolab_selectedRole") || "student");
   const [isAuthenticated, setIsAuthenticated] = useState(() => sessionStorage.getItem("sociolab_authenticated") === "true");
-  const [language, setLanguage] = useState(defaultLanguage);
+  const [language, setLanguage] = useState(() => localStorage.getItem("sociolab_language") || defaultLanguage);
   const [theme, setTheme] = useState(() => localStorage.getItem("sociolab_theme") || "light");
-  //const [learnerName, setLearnerName] = useState("Apprenant SocioLab");
+  //const [learnerName, setLearnerName] = useState("Enseignant SocioLab");
   //const [learnerId, setLearnerId] = useState("SL-0000");
   const [learnerName, setLearnerName] = useState(() => {
-  return localStorage.getItem("sociolab_learnerName") || "Apprenant SocioLab";
+  return localStorage.getItem("sociolab_learnerName") || "Enseignant SocioLab";
 });
 
   const [learnerId, setLearnerId] = useState(() => {
@@ -50,6 +50,11 @@ export function AppProvider({ children }) {
     document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.setItem("sociolab_language", language);
+    document.documentElement.lang = language;
+  }, [language]);
+
   const [profile, setProfile] = useState({
     name: "Enseignant SocioLab",
     photoUrl: "",
@@ -61,7 +66,7 @@ export function AppProvider({ children }) {
   const [courses, setCourses] = useState(() => {
     const storedCourses = localStorage.getItem("sociolab_courses");
     if (!storedCourses) return defaultCourses;
-
+ 
     try {
       return JSON.parse(storedCourses);
     } catch {
@@ -86,17 +91,19 @@ export function AppProvider({ children }) {
   });
   const [enrolledCourseIds, setEnrolledCourseIds] = useState([1]);
   const [completedLessons, setCompletedLessons] = useState(["soc-1-0", "soc-1-1", "soc-1-2", "soc-2-0"]);
-  const [publishedCourses] = useState(() => {
+  const [publishedCourses, setPublishedCourses] = useState(() => {
     const storedPublishedCourses = localStorage.getItem("sociolab_published_courses");
     if (!storedPublishedCourses) return [1, 4];
 
     try {
-      return JSON.parse(storedPublishedCourses);
+      const parsed = JSON.parse(storedPublishedCourses);
+      return Array.isArray(parsed) && parsed.length ? parsed : [1, 4];
     } catch {
       return [1, 4];
     }
   });
 
+  
   useEffect(() => {
     localStorage.setItem("sociolab_courses", JSON.stringify(courses));
   }, [courses]);
@@ -109,6 +116,10 @@ export function AppProvider({ children }) {
     localStorage.setItem("sociolab_admin_notifications", JSON.stringify(notifications));
   }, [notifications]);
 
+  useEffect(() => {
+    localStorage.setItem("sociolab_published_courses", JSON.stringify(publishedCourses));
+  }, [publishedCourses]);
+
   const enrollCourse = useCallback((courseId) => {
     setEnrolledCourseIds((current) => (current.includes(courseId) ? current : [...current, courseId]));
   }, []);
@@ -119,11 +130,15 @@ export function AppProvider({ children }) {
     ));
   }, []);
 
+  const completedLessonsSet = useMemo(() => new Set(completedLessons), [completedLessons]);
+
   const getCourseProgress = useCallback((course) => {
     const lessonKeys = course.modules.flatMap((module) => module.lessons.map((_, index) => `${module.id}-${index}`));
     if (!lessonKeys.length) return 0;
-    return Math.round((lessonKeys.filter((key) => completedLessons.includes(key)).length / lessonKeys.length) * 100);
-  }, [completedLessons]);
+
+    const completedCount = lessonKeys.reduce((count, key) => count + (completedLessonsSet.has(key) ? 1 : 0), 0);
+    return Math.round((completedCount / lessonKeys.length) * 100);
+  }, [completedLessonsSet]);
 
   const signIn = useCallback(() => {
     setIsAuthenticated(true);
@@ -133,7 +148,7 @@ export function AppProvider({ children }) {
   const signOut = useCallback(() => {
     setIsAuthenticated(false);
     setSelectedRole("student");
-    setLearnerName("Apprenant SocioLab");
+    setLearnerName("Enseignant SocioLab");
     setLearnerId("SL-0000");
     setLearnerEmail("");
     setStudentProfile({ photoUrl: "", photoName: "" });
@@ -145,31 +160,33 @@ export function AppProvider({ children }) {
   }, []);
 
   const publishCourse = useCallback((course) => {
-    setCourses((current) => {
-      const id = Math.max(0, ...current.map((item) => item.id)) + 1;
-      const modules = course.modules
-        .filter((module) => module.title.trim() && module.lessons.some((lesson) => lesson.trim()))
-        .map((module, index) => ({
-          ...module,
-          id: `course-${id}-module-${index + 1}`,
-          lessons: module.lessons.filter((lesson) => lesson.trim()),
-        }));
-      const newCourse = {
-        ...course,
-        id,
-        isPublished: true,
-        modules,
-        lessons: modules.reduce((total, module) => total + module.lessons.length, 0),
-        duration: `${modules.reduce((total, module) => total + module.hours, 0)} h`,
-        students: 0,
-        progress: 0,
-      };
-      return [newCourse, ...current];
-    });
-  }, []);
+    const nextId = Math.max(0, ...courses.map((item) => Number(item.id) || 0)) + 1;
+    const modules = course.modules
+      .filter((module) => module.title.trim() && module.lessons.some((lesson) => lesson.trim()))
+      .map((module, index) => ({
+        ...module,
+        id: `course-${nextId}-module-${index + 1}`,
+        lessons: module.lessons.filter((lesson) => lesson.trim()),
+      }));
+
+    const newCourse = {
+      ...course,
+      id: nextId,
+      isPublished: true,
+      modules,
+      lessons: modules.reduce((total, module) => total + module.lessons.length, 0),
+      duration: `${modules.reduce((total, module) => total + module.hours, 0)} h`,
+      students: 0,
+      progress: 0,
+    };
+
+    setCourses((current) => [newCourse, ...current]);
+    setPublishedCourses((current) => (current.includes(nextId) ? current : [nextId, ...current]));
+  }, [courses]);
 
   const deleteCourse = useCallback((courseId) => {
     setCourses((current) => current.filter((course) => course.id !== courseId));
+    setPublishedCourses((current) => current.filter((id) => id !== courseId));
   }, []);
 
   const addLibraryResource = useCallback((resource) => {
@@ -181,7 +198,7 @@ export function AppProvider({ children }) {
   }, []);
 
   const value = useMemo(() => ({
-    selectedRole, setSelectedRole, isAuthenticated, learnerName, setLearnerName, learnerId, setLearnerId, learnerEmail, setLearnerEmail, studentProfile, setStudentProfile, profile, setProfile, courses, enrolledCourseIds, completedLessons, publishedCourses,
+    selectedRole, setSelectedRole, isAuthenticated, learnerName, setLearnerName, learnerId, setLearnerId, learnerEmail, setLearnerEmail, studentProfile, setStudentProfile, profile, setProfile, courses, enrolledCourseIds, completedLessons, publishedCourses, setPublishedCourses,
     signIn, signOut, enrollCourse, toggleLesson, getCourseProgress, publishCourse, deleteCourse, libraryResources, addLibraryResource, deleteLibraryResource, notifications, setNotifications, language, setLanguage, theme, setTheme, translations,
   }), [selectedRole, isAuthenticated, learnerName, learnerId, learnerEmail, studentProfile, profile, courses, enrolledCourseIds, completedLessons, publishedCourses, deleteCourse, libraryResources, addLibraryResource, deleteLibraryResource, notifications, signIn, signOut, enrollCourse, toggleLesson, getCourseProgress, publishCourse, language, theme]);
 

@@ -1,10 +1,13 @@
 ﻿import { Link } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
+import { getCategoryLabel } from "../i18n/translations";
+import { getLocalizedCourse } from "../i18n/course-content";
 import heroImage from "../assets/hero.png";
 
 function Courses() {
-  const { courses, enrolledCourseIds, enrollCourse, language, translations } = useAppContext();
+  const { courses, publishedCourses, enrolledCourseIds, enrollCourse, language, translations } = useAppContext();
   const content = translations[language];
+  const visibleCourses = courses.filter((course) => course.isPublished || publishedCourses.includes(course.id));
 
   return (
     <section className="page-section reveal-section">
@@ -17,22 +20,27 @@ function Courses() {
       </div>
 
       <div className="course-grid">
-        {courses.map((course) => (
+        {visibleCourses.map((course) => {
+          const isNew = Boolean(course.isPublished || publishedCourses.includes(course.id));
+          const localizedCourse = getLocalizedCourse(course, language);
+
+          return (
           <article key={course.id} className="course-card">
             <div className="course-card-meta">
-              <span>{course.category}</span>
+              <span>{getCategoryLabel(content, course.category)}</span>
               <strong>{course.teacher}</strong>
+              {isNew && <span className="course-badge">{content.common.new}</span>}
             </div>
             <img
               className="catalog-course-image"
               src={course.imageUrl || heroImage}
-              alt={`Illustration : ${course.category}`}
+              alt={`${language === "fr" ? "Illustration :" : "Illustration:"} ${getCategoryLabel(content, course.category)}`}
               onError={(event) => {
                 event.currentTarget.src = heroImage;
               }}
             />
-            <h2>{course.title}</h2>
-            <p>{course.description}</p>
+            <h2>{localizedCourse.title}</h2>
+            <p>{localizedCourse.description}</p>
             <div className="course-card-footer">
               <Link to={`/course/${course.id}`} className="secondary-link">
                 {content.courses.viewCourse}
@@ -45,7 +53,8 @@ function Courses() {
               </button>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
